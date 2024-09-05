@@ -8,7 +8,7 @@ extern "C" {
 
 using namespace std::chrono_literals; 
 
-class Webp::Private {
+class Gempyre::Webp::Private {
 public:
     
     Private() : m_enc(nullptr, WebPAnimEncoderDelete) {
@@ -84,19 +84,19 @@ private:
     std::unique_ptr<WebPAnimEncoder, std::function<void(WebPAnimEncoder*)>> m_enc;
 } ;
 
-Webp::Webp(const Gempyre::Bitmap& bitmap) : m_private{std::make_unique<Private>(bitmap)} {}
-Webp::Webp() : m_private{std::make_unique<Private>()} {}
+Gempyre::Webp::Webp(const Gempyre::Bitmap& bitmap) : m_private{std::make_unique<Private>(bitmap)} {}
+Gempyre::Webp::Webp() : m_private{std::make_unique<Private>()} {}
 
-bool Webp::add(const Gempyre::Bitmap& bitmap, std::chrono::milliseconds ms) {
+bool Gempyre::Webp::add(const Gempyre::Bitmap& bitmap, std::chrono::milliseconds ms) {
     return m_private->add(bitmap, ms);
 }
 
-std::optional<std::vector<uint8_t>> Webp::image() const {
+std::optional<std::vector<uint8_t>> Gempyre::Webp::image() const {
     return m_private->encode();
 }
 
-Webp::~Webp() {}
+Gempyre::Webp::~Webp() {}
 
-std::string Webp::get_error_string() const {
+std::string Gempyre::Webp::get_error_string() const {
     return m_private->get_error_string();
 }
