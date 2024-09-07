@@ -3,6 +3,7 @@
 #include <gempyre_bitmap.h>
 #include <gempyre.h>
 #include <gempyre_utils.h>
+#include <iostream>
 
 int main(int argc, char** argv) {
     gempyre_utils_assert_x(argc > 1, "webp image parameter missing");
@@ -20,13 +21,14 @@ int main(int argc, char** argv) {
     WebPGempyre::WebP webp;
     for(const auto& frame : bmp) {
         gempyre_utils_assert(webp.add(frame->first, frame->second));
+        std::cout << "." << std::flush;
     }
     const auto c_url = "/image_url.webp";
     const auto pic = webp.picture();
     gempyre_utils_assert(pic);
     gempyre_utils_assert(ui.add_data(c_url, *pic));
     Gempyre::Element(ui, "produced").set_attribute("src", *url);
-
+    std::cout << std::endl;
     ui.run();
     return 0;
 }
