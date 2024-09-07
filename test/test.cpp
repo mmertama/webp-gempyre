@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     WebPGempyre::Bitmap bmp(bytes);
     WebPGempyre::WebP webp;
     for(const auto& frame : bmp) {
-        gempyre_utils_assert(webp.add(*frame, 100ms));
+        gempyre_utils_assert(webp.add(frame->first, frame->second));
     }
     const auto c_url = "/image_url.webp";
     const auto pic = webp.picture();

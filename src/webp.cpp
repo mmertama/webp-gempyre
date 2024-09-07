@@ -2,7 +2,9 @@
 #include "webp.hpp"
 extern "C" {
     #include "webp/encode.h"
+    #include "webp/decode.h"
     #include "webp/mux.h"
+    #include "webp/demux.h"
 }
 
 using namespace std::chrono_literals; 
@@ -105,3 +107,77 @@ WebPGempyre::WebP::~WebP() {}
 std::string WebPGempyre::WebP::get_error_string() const {
     return m_private->get_error_string();
 }
+
+class WebPGempyre::Bitmap::Private {
+    public:
+    Private(std::span<const uint8_t> bytes) :  m_dec{nullptr, WebPAnimDecoderDelete}  {
+        WebPData webp_data{bytes.data(), bytes.size()};
+        WebPAnimDecoderOptions dec_options;
+        WebPAnimDecoderOptionsInit(&dec_options);
+        dec_options.color_mode = MODE_RGBA  ;
+        dec_options.use_threads = false;
+        m_dec.reset(WebPAnimDecoderNew(&webp_data, &dec_options));
+        WebPAnimDecoderGetInfo(m_dec.get(), &m_anim_info); //  anim_info.loop_count;
+    }
+
+    Info info() const {
+        return {
+            m_anim_info.canvas_width,
+            m_anim_info.canvas_height,
+            m_anim_info.loop_count,
+            m_anim_info.bgcolor,
+            m_anim_info.frame_count
+        };
+    }
+
+    std::optional<FrameBitmap> next() { 
+        
+        if (!WebPAnimDecoderHasMoreFrames(m_dec.get()))
+            return std::nullopt;
+
+        const auto sz = m_anim_info.canvas_width * m_anim_info.canvas_height;   
+        uint8_t* buf;
+        int timestamp;
+
+        if (!WebPAnimDecoderGetNext(m_dec.get(), &buf, &timestamp))
+            return std::nullopt;
+        
+        Gempyre::Bitmap bmp{
+            static_cast<int>(m_anim_info.canvas_width),
+            static_cast<int>(m_anim_info.canvas_height),
+            m_anim_info.bgcolor};
+        const auto ptr = reinterpret_cast<const Gempyre::Color::type*>(buf);
+        const auto span = std::span<const Gempyre::Color::type>(
+                ptr, // UB?
+                sz / sizeof(Gempyre::Color::type));
+        bmp.set_data(span);
+        const auto time_gap = timestamp - m_current_time;
+        m_current_time = timestamp;
+        return FrameBitmap{std::move(bmp), std::chrono::milliseconds{time_gap}};
+        //WebPAnimDecoderReset(dec);
+        //const WebPDemuxer* demuxer = WebPAnimDecoderGetDemuxer(dec);
+        // ... (Do something using 'demuxer'; e.g. get EXIF/XMP/ICC data).
+        //WebPAnimDecoderDelete(dec);
+    }
+
+    WebPAnimInfo m_anim_info;
+    std::unique_ptr<WebPAnimDecoder, std::function<void(WebPAnimDecoder*)>> m_dec;
+    int m_current_time = 0;
+};
+
+WebPGempyre::Bitmap::Bitmap(std::span<const uint8_t> webp_bytes) :
+    m_private{std::make_unique<Private>(webp_bytes)} {
+    }
+
+WebPGempyre::Bitmap::~Bitmap() {}
+
+WebPGempyre::Bitmap::Info WebPGempyre::Bitmap::info() const {
+    return m_private->info();
+}
+
+WebPGempyre::Bitmap::FrameIterator WebPGempyre::Bitmap::begin() {
+    return FrameIterator{[this](){return m_private->next();}, m_private->info().frames};
+    }
+WebPGempyre::Bitmap::FrameIterator WebPGempyre::Bitmap::end() {
+    return FrameIterator(nullptr, m_private->info().frames);
+    }

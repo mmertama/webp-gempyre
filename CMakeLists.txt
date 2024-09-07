@@ -3,8 +3,9 @@ cmake_minimum_required(VERSION 3.21)
 project(webp_gempyre VERSION 1.0 LANGUAGES CXX)
 
 find_package(gempyre REQUIRED)
-find_package(WebP CONFIG REQUIRED) #  brew install webp
-set(WEBP_LIB WebP::webp WebP::libwebpmux)
+set(CMAKE_FIND_DEBUG_MODE TRUE)
+find_package(WebP REQUIRED) #  brew install webp
+set(WEBP_LIB WebP::webp WebP::libwebpmux WebP::webpdecoder WebP::webpdemux)
 
 set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/webp.cpp
