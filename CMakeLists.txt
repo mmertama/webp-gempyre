@@ -7,8 +7,8 @@ find_package(WebP CONFIG REQUIRED) #  brew install webp
 set(WEBP_LIB WebP::webp WebP::libwebpmux)
 
 set(SOURCES
-	${CMAKE_SOURCE_DIR}/src/webp.cpp
-    ${CMAKE_SOURCE_DIR}/src/webp.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/webp.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/webp.hpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
@@ -31,6 +31,8 @@ install(FILES src/webp.hpp
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gempyre
 )
 
-install(FILES ${CMAKE_SOURCE_DIR}/cmake/webp_gempyreConfig.cmake
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/webp_gempyreConfig.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
+
+add_subdirectory(test)
