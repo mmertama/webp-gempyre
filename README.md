@@ -34,6 +34,23 @@ Gempyre::Bitmap new_bmp(max_w, max_h, Gempyre::Color::Transparent);
 new_bmp.tile((max_x - bmp.width()) / 2, (max_y  - bmp.height()) / 2, bmp);
 ```
 
+Reading WebP images:
+
+```cpp
+const auto bytes = GempyreUtils::slurp<uint8_t>("image.webp");
+WebPGempyre::Bitmap bmp(bytes);
+for(const auto& frame : bmp) {
+    const auto& bitmap = frame->first;
+    ...
+   
+```
+
+or one-liner:
+
+```cpp
+const auto bitmap = WebPGempyre::Bitmap(GempyreUtils::slurp<uint8_t>("image.webp")).bitmap().value();
+```
+
 #### class WebP
 
 ##### WebP(const Gempyre::Bitmap& bitmap); 
@@ -54,15 +71,15 @@ new_bmp.tile((max_x - bmp.width()) / 2, (max_y  - bmp.height()) / 2, bmp);
 
 #### class Bitmap
 
-##### Bitmap(std::span<const uint8_t> webp_bytes);
+##### Bitmap(std::span&lt;const uint8_t&gt; webp_bytes);
 ###### Construct from WebP bytes.
 ##### Info info() const;
 ###### Get WebP info.
 ##### FrameIterator begin();
-###### Iterator over frames. The iterator points to std::pair<Gempyre::Bitmap, std::chrono::milliseconds>, where milliseconds is a frame period.
+###### Iterator over frames. The iterator points to std::pair&lt;Gempyre::Bitmap, std::chrono::milliseconds&gt;, where milliseconds is a frame period.
 ##### FrameIterator end();
 ###### Sentinel for iterator over frames.
-##### std::optional<Gempyre::Bitmap> bitmap();
+##### std::optional&lt;Gempyre::Bitmap&gt; bitmap();
 ###### Get the optional 1st (or any) WebP image
 
 #### What is Gempyre?
