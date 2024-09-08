@@ -14,21 +14,32 @@ int main(int argc, char** argv) {
     gempyre_utils_assert(url);
     gempyre_utils_assert(ui.resource(*url));
     Gempyre::Element(ui, "oname").set_html("original:" + *url);
+
+    // 1 just show webp
     Gempyre::Element(ui, "original").set_attribute("src", *url);
 
+    // 2 convert webp to bitmap and back to webp
+    WebPGempyre::WebP webp;
     const auto bytes = GempyreUtils::slurp<uint8_t>(source);
     WebPGempyre::Bitmap bmp(bytes);
-    WebPGempyre::WebP webp;
     for(const auto& frame : bmp) {
         gempyre_utils_assert(webp.add(frame->first, frame->second));
         std::cout << "." << std::flush;
     }
-    const auto c_url = "/image_url.webp";
+
+    const auto bitmap_url = "/image_from_bitmap.webp";
     const auto pic = webp.picture();
     gempyre_utils_assert(pic);
-    gempyre_utils_assert(ui.add_data(c_url, *pic));
-    Gempyre::Element(ui, "produced").set_attribute("src", *url);
+    gempyre_utils_assert(ui.add_data(bitmap_url, *pic));
+    Gempyre::Element(ui, "produced").set_attribute("src", bitmap_url);
     std::cout << std::endl;
+
+    // 3 show 1st frame as a PNG
+    const auto png_url = "/image_png.png";
+    const auto bitmap = bmp.bitmap();
+    gempyre_utils_assert(ui.add_data(png_url, bitmap->png_image()));
+    Gempyre::Element(ui, "still").set_attribute("src", png_url);
+
     ui.run();
     return 0;
 }

@@ -34,7 +34,7 @@ Gempyre::Bitmap new_bmp(max_w, max_h, Gempyre::Color::Transparent);
 new_bmp.tile((max_x - bmp.width()) / 2, (max_y  - bmp.height()) / 2, bmp);
 ```
 
-#### API
+#### class WebP
 
 ##### WebP(const Gempyre::Bitmap& bitmap); 
 ###### Construct with a single frame.
@@ -51,7 +51,19 @@ new_bmp.tile((max_x - bmp.width()) / 2, (max_y  - bmp.height()) / 2, bmp);
 ##### std::string get_error_string() const;    
 ###### Get encoder error information.
 ###### return error string.
-   
+
+#### class Bitmap
+
+##### Bitmap(std::span<const uint8_t> webp_bytes);
+###### Construct from WebP bytes.
+##### Info info() const;
+###### Get WebP info.
+##### FrameIterator begin();
+###### Iterator over frames. The iterator points to std::pair<Gempyre::Bitmap, std::chrono::milliseconds>, where milliseconds is a frame period.
+##### FrameIterator end();
+###### Sentinel for iterator over frames.
+##### std::optional<Gempyre::Bitmap> bitmap();
+###### Get the optional 1st (or any) WebP image
 
 #### What is Gempyre?
 

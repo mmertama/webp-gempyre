@@ -141,25 +141,31 @@ class WebPGempyre::Bitmap::Private {
 
         if (!WebPAnimDecoderGetNext(m_dec.get(), &buf, &timestamp))
             return std::nullopt;
-        
+
+        if (reinterpret_cast<uintptr_t>(buf) & (sizeof(Gempyre::Color::type) - 1)) // must be aligned data
+            return std::nullopt;    
+
         Gempyre::Bitmap bmp{
             static_cast<int>(m_anim_info.canvas_width),
             static_cast<int>(m_anim_info.canvas_height),
             m_anim_info.bgcolor};
         const auto ptr = reinterpret_cast<const Gempyre::Color::type*>(buf);
         const auto span = std::span<const Gempyre::Color::type>(
-                ptr, // UB?
-                sz / sizeof(Gempyre::Color::type));
+                ptr,
+                sz);
         bmp.set_data(span);
         const auto time_gap = timestamp - m_current_time;
         m_current_time = timestamp;
         return FrameBitmap{std::move(bmp), std::chrono::milliseconds{time_gap}};
-        //WebPAnimDecoderReset(dec);
         //const WebPDemuxer* demuxer = WebPAnimDecoderGetDemuxer(dec);
         // ... (Do something using 'demuxer'; e.g. get EXIF/XMP/ICC data).
-        //WebPAnimDecoderDelete(dec);
     }
 
+    void reset() {
+        WebPAnimDecoderReset(m_dec.get());
+    }
+
+private:
     WebPAnimInfo m_anim_info;
     std::unique_ptr<WebPAnimDecoder, std::function<void(WebPAnimDecoder*)>> m_dec;
     int m_current_time = 0;
@@ -176,8 +182,14 @@ WebPGempyre::Bitmap::Info WebPGempyre::Bitmap::info() const {
 }
 
 WebPGempyre::Bitmap::FrameIterator WebPGempyre::Bitmap::begin() {
-    return FrameIterator{[this](){return m_private->next();}, m_private->info().frames};
+    m_private->reset();
+    return FrameIterator{[this](){return m_private->next();}};
     }
 WebPGempyre::Bitmap::FrameIterator WebPGempyre::Bitmap::end() {
-    return FrameIterator(nullptr, m_private->info().frames);
+    return FrameIterator([]() -> std::optional<FrameBitmap> {return std::nullopt;});
     }
+
+std::optional<Gempyre::Bitmap> WebPGempyre::Bitmap::bitmap() {
+    const auto b = begin();
+    return (b != end() && *b) ? std::make_optional((*b)->first) : std::nullopt;
+}    
