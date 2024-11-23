@@ -1,6 +1,6 @@
 find_library(webpg_path webp_gempyre REQUIRED)
 find_package(WebP CONFIG REQUIRED) #  brew install webp
-set(WEBP_LIB WebP::webp WebP::libwebpmux)
+set(WEBP_LIB WebP::webp WebP::libwebpmux WebP::webpdecoder WebP::webpdemux)
 # Expose a target
 add_library(webp_gempyre::webp_gempyre UNKNOWN IMPORTED)
 # Set the imported library file 

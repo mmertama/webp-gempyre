@@ -24,6 +24,10 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
+if (APPLE)
+    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "Universal binary" FORCE)
+endif()
+
 target_link_libraries(${PROJECT_NAME} 
 	PRIVATE gempyre::gempyre 
 	PUBLIC ${WEBP_LIB})

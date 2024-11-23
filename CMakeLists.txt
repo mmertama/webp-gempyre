@@ -5,6 +5,14 @@ project(webp_gempyre VERSION 1.0 LANGUAGES CXX)
 find_package(gempyre REQUIRED)
 set(CMAKE_FIND_DEBUG_MODE TRUE)
 find_package(WebP REQUIRED) #  brew install webp
+
+if (NOT WebP)
+	find_library(WEBP webp)
+	if (NOT WEBP)
+		message(FATAL_ERROR "WebP not properly installed")
+	endif()
+endif()
+
 set(WEBP_LIB WebP::webp WebP::libwebpmux WebP::webpdecoder WebP::webpdemux)
 
 set(SOURCES
@@ -21,6 +29,13 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+
+
+if (APPLE)
+    if (NOT DEFINED NATIVE_ARCHITECURE)
+        set( "arm64;x86_64" CACHE STRING "Universal binary" FORCE)
+    endif()    
+endif()
 
 target_link_libraries(${PROJECT_NAME} 
 	PRIVATE gempyre::gempyre 
