@@ -5,9 +5,17 @@
 
 Gempyre supports PNG out from box, but for example animations are good reason to look another formats. WebP class has a simple API to convert GempyreBitmap as WeBP picture and add animation frames.
 
+With WebP class you can:
+* Create WebP images and animation frames from Gempyre::Bitmaps.
+  * Generate animations runtime
+  * Pass images to Gempyre::Elements for very efficient draw.
+* Create Gempyre::Bitmaps images from WebP image and animations.
+  * Runtime modify WebP images
+  * Convert WebP to PNG images.
+
 ##### Gempyre::Bitmap
 
-Gempyre::Bitmap is internal Gempyre image class. Drawing that on UI needs either done using HTML Canvas or bitmap has to be converted to image format that used browser supports.  Drawing a single image is magnitudes more efficient when browser renders that using a native image than blitted from individual pixels using HTML Canvas. Gempyre has APIs to use PNG images and let generate a PNG from Bitmap and then bind a URL to PNG so it can be accessed from HTML componets as any data.
+Gempyre::Bitmap is internal Gempyre image class. Drawing that on UI needs either done using HTML Canvas or bitmap has to be converted to image format that used browser supports.  Drawing a single image is magnitudes more efficient when browser renders that using a native image than blitted from individual pixels using HTML Canvas. Gempyre has APIs to use PNG images and let generate a PNG from Bitmap and then bind a URL to PNG so it can be accessed from HTML components as any data.
 
  ##### Using WebP
 
