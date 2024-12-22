@@ -30,7 +30,7 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} 
 	PRIVATE gempyre::gempyre 
-	PUBLIC ${WEBP_LIB})
+	PRIVATE $<TARGET_PROPERTY:webp_gempyre,LINK_LIBRARIES>)
 
 set(TEST_IMAGE "https://colinbendell.github.io/webperf/animated-gif-decode/3.webp")
 file(DOWNLOAD ${TEST_IMAGE} "${CMAKE_CURRENT_BINARY_DIR}/test_image.webp")

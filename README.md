@@ -18,6 +18,12 @@ Install webp
 * ```$ sudo apt install webp```
 * ```$ brew install webp```
 
+##### Install
+```$ cmake ../.. -G Ninja
+   $ cmake --build . 
+   $ sudo cmake --install .```
+
+
 ##### Gempyre::Bitmap
 
 Gempyre::Bitmap is internal Gempyre image class. Drawing that on UI needs either done using HTML Canvas or bitmap has to be converted to image format that used browser supports.  Drawing a single image is magnitudes more efficient when browser renders that using a native image than blitted from individual pixels using HTML Canvas. Gempyre has APIs to use PNG images and let generate a PNG from Bitmap and then bind a URL to PNG so it can be accessed from HTML components as any data.
