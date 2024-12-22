@@ -13,7 +13,7 @@ With WebP class you can:
   * Runtime modify WebP images
   * Convert WebP to PNG images.
 
-### Dependencies
+##### Dependencies
 Install webp
 * ```$ sudo apt install webp```
 * ```$ brew install webp```
