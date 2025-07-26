@@ -52,3 +52,4 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/webp_gempyreConfig.cmake
 )
 
 add_subdirectory(test)
+add_subdirectory(webp2png)
