@@ -15,7 +15,7 @@ With WebP class you can:
 
 ##### Dependencies
 Install webp
-* ```$ sudo apt install webp```
+* ```$ sudo apt install libwebp-dev ``` or
 * ```$ brew install webp```
 
 ##### Install
